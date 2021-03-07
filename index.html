@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>WILD CODE SCHOOL</h1>
+    <p>Cliquez sur l'écran noir</p>
+    <canvas id="canv"></canvas>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat.gui.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js'></script>
+    <script src='https://www.iutbayonne.univ-pau.fr/~klevron/nabpi/three/OrbitControls.js'></script>
+
+
+    <script>
+window.onload = function () {
+    var canvas = document.getElementById("canv");
+    var ctx = canvas.getContext("2d");
+    /*fonction*/
+    function randomColor() {
+        return '#' + Math.random().toString(16).slice(2, 8);
+    }
+
+    function randomWord() {
+        var word = words[Math.floor(Math.random() * words.length)];
+        return word;
+    }
+
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    /*Pour un canvas pleine page*/
+    var W = window.innerWidth,
+        H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+    var particles = [];
+    var mouse = {};
+    /*création de toutes mes particules*/
+    var particle_count = 100;
+    for (var i = 0; i < particle_count; i++) {
+        particles.push(new particle());
+    }
+    canvas.addEventListener('mousedown', track_mouse, false);
+    canvas.addEventListener('touch', track_mouse, false);
+
+    function track_mouse(e) {
+        mouse.x = e.pageX;
+        mouse.y = e.pageY;
+
+        for (var i = 0; i < particle_count; i++) {
+            particles.push(new particle());
+        }
+    }
+
+    function particle() {
+        // *configuration dans l espace, pour la vitesse et les couleurs.
+
+        this.speed = {
+            // x: -2.5 + Math.random() * 5,
+            // y: -2.5 + Math.random() * 5
+            x: -6+ Math.random() * 6,
+             y: -6 + Math.random() * 6
+        };
+        /*placement au milieu*/
+        if (mouse.x && mouse.y) {
+            this.location = {
+                x: mouse.x,
+                y: mouse.y
+            };
+        } else {
+            this.location = {
+                x: W / 2,
+                y: H / 2
+              
+            };
+        }
+        this.color = randomColor()
+
+        this.font = {
+            size: randomInt(3, 15)
+
+
+        }
+
+        this.word = randomWord()
+    }
+
+    function draw() {
+        ctx.globalCompositeOperation = "source-over";
+        // background de fond*/
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";
+        for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            ctx.beginPath();
+            ctx.font = p.font.size + "vh Luckiest Guy";
+            ctx.textAlign = "center";
+            // ctx.transition = "all 2s ease";
+            ctx.transiton = "all 10s ease";
+            ctx.fillStyle = p.color;
+            ctx.fillText(p.word, p.location.x, p.location.y);
+            ctx.fill();
+            ctx.stroke();
+
+
+            p.location.x += p.speed.x;
+            p.location.y += p.speed.y;
+
+            // p.speed.x += randomInt(-0.01, 0.01);
+            // p.speed.y += randomInt(-0.01, 0.01);
+            p.speed.x += randomInt(0.02, 0.02);
+            p.speed.y += randomInt(0.02, 0.02);
+
+
+        }
+    }
+    // interval
+    setInterval(draw, 10);
+    // setInterval(draw, 15);
+
+};
+
+//tableau de mots 
+words = ["Wild", "Code", "School", "Cession ", "Testeurs", "2021", ""];
+
+    </script>
+</body>
+</html>
